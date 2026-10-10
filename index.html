@@ -7,20 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Manrope:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: sticky topbar + sidebar nav (desktop) / horizontal rail (mobile) */
-/* Color: deep navy base, 7 level hues as dynamic accent */
-/* Type: Barlow Condensed (impact numerics) × Manrope (legible body) */
 :root {
-  --bg:    #07090f;
-  --s1:    #0e1120;
-  --s2:    #151824;
-  --line:  #1c2135;
-  --fg:    #e6eaf5;
-  --mid:   #5e6b85;
-  --dim:   #2e3650;
+  --bg:#07090f; --s1:#0e1120; --s2:#151824; --line:#1c2135;
+  --fg:#e6eaf5; --mid:#5e6b85; --dim:#2e3650;
   --l1:#e3262b; --l2:#f07c1e; --l3:#f5c518;
   --l4:#b7d334; --l5:#5cc83b; --l6:#22a65a; --l7:#1f7fd1;
-  --accent: var(--l1);
+  --accent:#e3262b;
+  --accent-tint:rgba(227,38,43,.08);
+  --accent-border:rgba(227,38,43,.25);
   --num:"Barlow Condensed","Arial Narrow",sans-serif;
   --body:"Manrope",system-ui,sans-serif;
   --r:10px;
@@ -35,18 +29,17 @@
   --fg:#0c1023;--mid:#58698a;--dim:#b5bdd0;color-scheme:light;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html{height:100%}
 body{
   background:var(--bg);color:var(--fg);
   font-family:var(--body);font-size:14px;line-height:1.6;
-  padding-inline:0;
+  height:100%;
 }
 
-/* ─── Topbar ─── */
+/* Topbar */
 .topbar{
   position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
-  background:color-mix(in srgb,var(--bg) 92%,transparent);
-  backdrop-filter:blur(12px);
+  background:var(--bg);
   border-bottom:1px solid var(--line);
   padding:11px 18px 9px;
 }
@@ -63,28 +56,19 @@ body{
 }
 .chip strong{color:var(--fg)}
 .rail{display:flex;gap:3px;margin-top:9px}
-.rseg{
-  height:3px;flex:1;border-radius:2px;
-  background:var(--line);transition:background .3s;
-}
+.rseg{height:3px;flex:1;border-radius:2px;background:var(--line);transition:background .3s}
 
-/* ─── Shell ─── */
-.shell{
-  display:grid;grid-template-columns:196px 1fr;
-  min-height:calc(100dvh - 54px);
-}
-@media(max-width:680px){
-  .shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}
-}
+/* Shell */
+.shell{display:grid;grid-template-columns:196px 1fr;min-height:calc(100vh - 54px)}
+@media(max-width:680px){.shell{grid-template-columns:1fr}}
 
-/* ─── Sidebar ─── */
+/* Sidebar */
 .sidebar{
   border-right:1px solid var(--line);
   padding:8px 7px;display:flex;flex-direction:column;gap:2px;
-  position:sticky;
-  top:calc(env(safe-area-inset-top,0px) + 54px);
-  height:calc(100dvh - 54px);overflow-y:auto;scrollbar-width:thin;
-  scrollbar-color:var(--line) transparent;
+  position:sticky;top:calc(env(safe-area-inset-top,0px) + 54px);
+  height:calc(100vh - 54px);overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--line) transparent;
 }
 @media(max-width:680px){
   .sidebar{
@@ -115,10 +99,7 @@ body{
 .lb:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .lb-bar{width:3px;min-height:38px;align-self:stretch;border-radius:2px;flex-shrink:0}
 .lb-body{flex:1;min-width:0}
-.lb-num{
-  font-family:var(--num);font-weight:900;font-size:29px;line-height:.88;
-  transition:color .2s;
-}
+.lb-num{font-family:var(--num);font-weight:900;font-size:29px;line-height:.88}
 .lb-name{
   font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
   color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -135,138 +116,92 @@ body{
   background:var(--fg);color:var(--bg);padding:1px 4px;border-radius:3px;
 }
 @media(max-width:680px){
-  .lb{padding:6px 5px;flex-direction:column;align-items:center;
-      gap:3px;min-width:46px;border-radius:8px}
+  .lb{padding:6px 5px;flex-direction:column;align-items:center;gap:3px;min-width:46px;border-radius:8px}
   .lb-bar,.lb-body,.lb-ck,.lb-now{display:none}
   .lb-num{font-size:27px;line-height:1}
 }
 
-/* ─── Content ─── */
-.content{
-  padding:22px 20px 56px;
-  max-width:780px;
-  transition:opacity .14s ease;
-}
+/* Content */
+.content{padding:22px 20px 56px;max-width:780px;transition:opacity .14s ease}
 .content.fading{opacity:0}
 @media(max-width:680px){.content{padding:16px 13px 44px}}
 
+/* Level header */
 .lv-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
 .lv-bignum{
   font-family:var(--num);font-weight:900;
   font-size:clamp(68px,10.5vw,110px);line-height:.82;
   flex-shrink:0;color:var(--accent);
-  transition:color .2s;
 }
 .lv-ht{flex:1;min-width:0}
-.lv-tag{
-  font-size:10px;font-weight:800;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--accent);margin-bottom:4px;
-}
-.lv-title{
-  font-family:var(--num);font-weight:900;
-  font-size:clamp(23px,4vw,36px);text-transform:uppercase;line-height:1.0;
-  text-wrap:balance;
-}
+.lv-tag{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.lv-title{font-family:var(--num);font-weight:900;font-size:clamp(23px,4vw,36px);text-transform:uppercase;line-height:1.0}
 .lv-expl{font-size:14px;color:var(--mid);margin-top:5px;line-height:1.45}
 
+/* Phase note — tint via JS-set vars */
 .ph-note{
   font-size:12px;color:var(--mid);line-height:1.55;
   padding:9px 13px;margin-bottom:16px;
   border-left:3px solid var(--accent);
   border-radius:0 8px 8px 0;
-  background:color-mix(in srgb,var(--accent) 7%,transparent);
+  background:var(--accent-tint);
 }
 
-.stats{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));
-  gap:7px;margin-bottom:16px;
-}
-.stat{
-  background:var(--s1);border:1px solid var(--line);
-  border-radius:var(--r);padding:11px 12px;
-}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:7px;margin-bottom:16px}
+.stat{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:11px 12px}
 .stat-v{
   font-family:var(--num);font-weight:900;font-size:23px;line-height:1;
   font-variant-numeric:tabular-nums;color:var(--accent);
 }
-.stat-l{
-  font-size:9px;font-weight:700;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--mid);margin-top:2px;
-}
+.stat-l{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mid);margin-top:2px}
 .stat-s{font-size:10px;color:var(--dim);margin-top:2px}
 
-.cgrid{
-  display:grid;grid-template-columns:1.08fr 1fr;
-  gap:10px;align-items:start;
-}
+/* Two-col */
+.cgrid{display:grid;grid-template-columns:1.08fr 1fr;gap:10px;align-items:start}
 @media(max-width:580px){.cgrid{grid-template-columns:1fr}}
 
+/* Skill card */
 .skill{
-  background:var(--s1);
-  border:2px solid var(--accent);
+  background:var(--s1);border:2px solid var(--accent);
   border-radius:var(--r);padding:16px;
   display:flex;flex-direction:column;gap:12px;
 }
-.skill-ey{
-  font-size:9px;font-weight:900;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--accent);
-}
-.skill-name{
-  font-family:var(--num);font-weight:900;font-size:34px;
-  line-height:.92;text-transform:uppercase;margin-top:-2px;
-}
+.skill-ey{font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.skill-name{font-family:var(--num);font-weight:900;font-size:34px;line-height:.92;text-transform:uppercase;margin-top:-2px}
 .skill-row{display:flex;flex-direction:column;gap:2px}
-.skill-dt{
-  font-size:9px;font-weight:800;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--mid);
-}
+.skill-dt{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mid)}
 .skill-dd{font-size:12px;line-height:1.55}
 .skill-mes{
   border-radius:7px;padding:8px 10px;font-size:12px;line-height:1.45;
-  background:color-mix(in srgb,var(--accent) 10%,transparent);
-  border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);
+  background:var(--accent-tint);
+  border:1px solid var(--accent-border);
 }
-.skill-mes::before{content:"✓ ";font-weight:800;color:var(--accent)}
+.skill-mes::before{content:"\2713 ";font-weight:800;color:var(--accent)}
 
+/* Right col */
 .rcol{display:flex;flex-direction:column;gap:8px}
-.box{
-  background:var(--s1);border:1px solid var(--line);
-  border-radius:var(--r);padding:12px 14px;
-}
-.box-h{
-  font-size:9px;font-weight:800;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--mid);margin-bottom:8px;
-}
+.box{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.box-h{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:8px}
 
-.cd-n{
-  font-family:var(--num);font-weight:900;font-size:54px;line-height:1;
-  font-variant-numeric:tabular-nums;color:var(--accent);
-}
-.cd-u{
-  font-size:10px;font-weight:700;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--mid);margin-top:1px;
-}
+/* Countdown */
+.cd-n{font-family:var(--num);font-weight:900;font-size:54px;line-height:1;font-variant-numeric:tabular-nums;color:var(--accent)}
+.cd-u{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mid);margin-top:1px}
 .cd-d{font-size:11px;color:var(--dim);margin-top:4px}
 
+/* Grow */
 .grow{list-style:none;display:flex;flex-direction:column;gap:8px}
 .gi{display:grid;grid-template-columns:58px 1fr;gap:6px}
-.gi-k{
-  font-size:9px;font-weight:800;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--accent);padding-top:1px;
-}
+.gi-k{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);padding-top:1px}
 .gi-v{font-size:12px;line-height:1.5}
 
+/* Prod + fail */
 .prod-list{list-style:none;display:flex;flex-direction:column;gap:5px}
-.prod-item{
-  font-size:12px;line-height:1.45;
-  padding-left:15px;position:relative;
-}
-.prod-item::before{
-  content:"→";position:absolute;left:0;
-  font-weight:700;color:var(--accent);
-}
+.prod-item{font-size:12px;line-height:1.45;padding-left:15px;position:relative}
+.prod-item::before{content:"\2192";position:absolute;left:0;font-weight:700;color:var(--accent)}
 .fail-p{font-size:12px;color:var(--mid);line-height:1.5}
 
+/* Win */
 .win{
   all:unset;cursor:pointer;display:block;width:100%;
   text-align:center;padding:12px;border-radius:8px;
@@ -274,10 +209,7 @@ body{
   transition:opacity .15s,transform .1s;
 }
 .win.todo{background:var(--accent);color:#07090f}
-.win.done{
-  background:transparent;color:var(--accent);
-  border:2px solid var(--accent);padding:10px;
-}
+.win.done{background:transparent;color:var(--accent);border:2px solid var(--accent);padding:10px}
 .win:hover{opacity:.85}
 .win:active{transform:scale(.98)}
 .win:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
@@ -288,7 +220,6 @@ footer{
   padding:20px 20px 24px;border-top:1px solid var(--line);
   font-size:11px;color:var(--dim);line-height:1.6;max-width:780px;
 }
-
 @media(prefers-reduced-motion:reduce){
   .content,.win,.rseg{transition:none}
   .win.popping{animation:none}
@@ -317,16 +248,16 @@ footer{
 <footer>Les vidéos et vues sont cumulées depuis le 11 oct. 2026. Revenus estimés à ~2 €/1 000 vues longues — remplace par ton RPM réel (YouTube Studio › Revenus) dès que tu as 2 mois de données. Les levels validés sont enregistrés dans ce navigateur.</footer>
 
 <script>
-const PH={
-  1:"Phase 1 · 2,7K → 4K : tes premiers fans te poussent, chaque vidéo doit leur donner envie de partager.",
-  2:"Phase 2 · 4K → 8K : l'algorithme commence à te recommander, tout se joue sur la rétention et l'enchaînement.",
-  3:"Phase 3 · 8K → 16K : tu deviens un nom, tu vas chercher des publics qui ne te connaissent pas encore."
+var PH = {
+  1: "Phase 1 · 2,7K → 4K : tes premiers fans te poussent, chaque vidéo doit leur donner envie de partager.",
+  2: "Phase 2 · 4K → 8K : l'algorithme commence à te recommander, tout se joue sur la rétention et l'enchaînement.",
+  3: "Phase 3 · 8K → 16K : tu deviens un nom, tu vas chercher des publics qui ne te connaissent pas encore."
 };
 
-const LV=[
-  {c:"--l1",ph:1,name:"Égaler le record",goal:"50K vues",date:"2026-11-30",
+var LV = [
+  {c:"--l1", hex:"#e3262b", ph:1, name:"Égaler le record", goal:"50K vues", date:"2026-11-30",
    exploit:"Une vidéo longue à 50 000 vues",
-   stats:{vids:[9,2,7],longs:"70K",shorts:"120K",subs:"3 100",eur:"Premiers €"},
+   stats:{vids:[9,2,7], longs:"70K", shorts:"120K", subs:"3 100", eur:"Premiers €"},
    skill:{name:"Le hook",
      why:"Ta miniature fait cliquer. Si les 30 premières secondes ne tiennent pas la même promesse, le spectateur part et YouTube arrête de pousser.",
      ex:"Écris 3 versions de ton intro avant de tourner. L'enjeu physique est dit avant 10 s, la première galère est à l'écran avant 30 s, zéro présentation.",
@@ -336,9 +267,9 @@ const LV=[
          ["Abonnés","Demande l'abonnement juste après le moment le plus fort, jamais au début."]],
    prod:["Titre et miniature décidés avant le tournage","Tournage de la Toussaint en 2 jours max"],
    fail:"Analyse la rétention à 30 s : si elle est bonne, c'est le concept ; si elle est mauvaise, c'est le hook. Tu sais quoi corriger."},
-  {c:"--l2",ph:1,name:"Premier virement",goal:"70 € reçus",date:"2026-12-31",
+  {c:"--l2", hex:"#f07c1e", ph:1, name:"Premier virement", goal:"70 € reçus", date:"2026-12-31",
    exploit:"Premier paiement AdSense (seuil 70 €)",
-   stats:{vids:[15,3,12],longs:"120K",shorts:"300K",subs:"3 500",eur:"70 € virés"},
+   stats:{vids:[15,3,12], longs:"120K", shorts:"300K", subs:"3 500", eur:"70 € virés"},
    skill:{name:"L'écriture orale",
      why:"Une voix off écrite comme une rédaction, ça s'entend et ça fait décrocher. Les créateurs que tu admires écrivent comme ils parlent.",
      ex:"Écris ta voix off, puis lis-la à voix haute : chaque phrase où tu butes est réécrite. Phrases de moins de 15 mots. Une boucle ouverte toutes les 2 min.",
@@ -348,9 +279,9 @@ const LV=[
          ["Abonnés","Un live après chaque sortie : le public des lives est celui qui s'abonne et qui revient."]],
    prod:["4 Shorts découpés dans les rushs de chaque longue","1 vidéo tournée pendant les vacances de Noël"],
    fail:"Les gains sous 70 € restent cumulés et seront versés le mois suivant le passage du seuil. Rien n'est perdu."},
-  {c:"--l3",ph:2,name:"La 80K",goal:"80K vues",date:"2027-02-15",
+  {c:"--l3", hex:"#f5c518", ph:2, name:"La 80K", goal:"80K vues", date:"2027-02-15",
    exploit:"Une vidéo longue à 80 000 vues",
-   stats:{vids:[22,4,18],longs:"220K",shorts:"600K",subs:"4 500",eur:"~150 €/mois"},
+   stats:{vids:[22,4,18], longs:"220K", shorts:"600K", subs:"4 500", eur:"~150 €/mois"},
    skill:{name:"L'escalade",
      why:"La plupart des vidéos perdent leur public entre la minute 5 et 10. Il faut que chaque séquence monte d'un cran par rapport à la précédente.",
      ex:"Avant de monter, écris chaque séquence sur une ligne avec son niveau de tension de 1 à 10. Si un chiffre redescend, tu coupes ou tu déplaces.",
@@ -360,9 +291,9 @@ const LV=[
          ["Abonnés","Collab avec des créateurs de ta taille (5–20K) : ton public te découvre avec leur recommandation."]],
    prod:["Script complet avant tournage","Montage en 3 passes : assemblage, rythme, son + étalonnage"],
    fail:"Compare la courbe de cette vidéo avec celle de ton record : l'endroit où elle chute te dit quelle séquence n'a pas monté."},
-  {c:"--l4",ph:2,name:"Le club",goal:"250 €/mois",date:"2027-04-15",
+  {c:"--l4", hex:"#b7d334", ph:2, name:"Le club", goal:"250 €/mois", date:"2027-04-15",
    exploit:"250 € sur un mois (pub + membres)",
-   stats:{vids:[33,6,27],longs:"380K",shorts:"1 M",subs:"6 000",eur:"250 €/mois"},
+   stats:{vids:[33,6,27], longs:"380K", shorts:"1 M", subs:"6 000", eur:"250 €/mois"},
    skill:{name:"Toi à l'écran",
      why:"Les gens viennent pour un concept et restent pour une personne. Tu as peur de donner ton avis : c'est exactement ce qui fera la différence entre un spectateur et un fan.",
      ex:"Dans chaque vidéo, un moment face caméra où tu dis ce que tu penses vraiment, sans le scénariser. Style réel par défaut, cinématographique pour les 2–3 moments forts.",
@@ -372,9 +303,9 @@ const LV=[
          ["Abonnés","Making-of exclusif membres annoncé dans chaque vidéo et chaque live."]],
    prod:["Déléguer le montage des Shorts","1 vidéo complète pendant les vacances d'hiver"],
    fail:"Si les membres ne suivent pas, change ce qui est offert dans le club, pas le prix."},
-  {c:"--l5",ph:3,name:"La 150K",goal:"150K + sponsor",date:"2027-05-31",
+  {c:"--l5", hex:"#5cc83b", ph:3, name:"La 150K", goal:"150K + sponsor", date:"2027-05-31",
    exploit:"150K vues + premier sponsor (300 €)",
-   stats:{vids:[41,8,33],longs:"600K",shorts:"1,5 M",subs:"8 000",eur:"300 € sponsor"},
+   stats:{vids:[41,8,33], longs:"600K", shorts:"1,5 M", subs:"8 000", eur:"300 € sponsor"},
    skill:{name:"Le twist",
      why:"Une fin forte, c'est ce qui fait partager une vidéo. C'est aussi le cœur de ton ADN : le twist qui prouve que la limite était un mensonge.",
      ex:"Écris la fin en premier, avant tout le reste du script. Teste-la sur 2 personnes : si elles ne réagissent pas à voix haute, réécris.",
@@ -384,9 +315,9 @@ const LV=[
          ["Abonnés","Apparais dans la vidéo d'un créateur plus gros (50K+). Un passage chez lui vaut plusieurs de tes vidéos en abonnés."]],
    prod:["Vacances de printemps entièrement pour cette vidéo","Site pour les marques envoyé à 15 marques dès la sortie"],
    fail:"Démarche quand même les marques avec ta meilleure vidéo et ta croissance depuis octobre."},
-  {c:"--l6",ph:3,name:"Le dossier",goal:"400 €/mois",date:"2027-06-30",
+  {c:"--l6", hex:"#22a65a", ph:3, name:"Le dossier", goal:"400 €/mois", date:"2027-06-30",
    exploit:"400 €/mois de moyenne sur avril, mai et juin",
-   stats:{vids:[46,9,37],longs:"800K",shorts:"2 M",subs:"11 000",eur:"400 €/mois"},
+   stats:{vids:[46,9,37], longs:"800K", shorts:"2 M", subs:"11 000", eur:"400 €/mois"},
    skill:{name:"La profondeur",
      why:"Une vidéo qui pose une vraie question et y répond par ce que tu vis, on la partage et on s'en souvient. C'est ta couche Fond.",
      ex:"Pose une question au début (ex. « qu'est-ce qui nous empêche de partir ? »). Ne donne jamais la réponse avec des mots : ce que tu vis doit y répondre. Morale en une phrase, à la fin.",
@@ -396,9 +327,9 @@ const LV=[
          ["Abonnés","Une série courte cet été (2–3 vidéos liées) : le spectateur s'abonne pour ne pas rater la suite."]],
    prod:["Les 3 scripts de l'été écrits avant la fin des cours","Le dossier chiffré présenté à tes parents"],
    fail:"Présente quand même la courbe. Une progression régulière depuis octobre reste un argument solide."},
-  {c:"--l7",ph:3,name:"Vivre de YouTube",goal:"1 000 €/mois",date:"2027-08-31",
+  {c:"--l7", hex:"#1f7fd1", ph:3, name:"Vivre de YouTube", goal:"1 000 €/mois", date:"2027-08-31",
    exploit:"1 000 € en juillet ET en août",
-   stats:{vids:[67,12,55],longs:"1,5 M",shorts:"3 M",subs:"16 000",eur:"1 000 €/mois"},
+   stats:{vids:[67,12,55], longs:"1,5 M", shorts:"3 M", subs:"16 000", eur:"1 000 €/mois"},
    skill:{name:"Le son",
      why:"Le son fait la moitié de l'émotion. C'est la compétence qui fait passer une bonne vidéo à une vidéo qui marque, et l'été te donne le temps de la travailler.",
      ex:"Une passe de montage rien que pour le son : ambiances, silences avant les moments forts, musique qui monte avec l'escalade. Coupe la musique au moment le plus intense.",
@@ -410,141 +341,152 @@ const LV=[
    fail:"Entre 400 et 1 000 €, la trajectoire est là. Tu continues en ajustant, tu ne repars pas de zéro."}
 ];
 
-const KEY="loan-7lvl-v4";
-let state={};
-try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
-const won=i=>!!state[i];
-const cur=()=>{const k=LV.findIndex((_,i)=>!won(i));return k<0?LV.length-1:k};
-const fmt=d=>new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"});
-
-let sel=cur();
-
-function renderRail(){
-  const c=cur();
-  document.getElementById("rail").innerHTML=LV.map((L,i)=>{
-    let bg=won(i)?`var(${L.c})`:(i===c?`color-mix(in srgb,var(${L.c}) 55%,transparent)`):`var(--line)`;
-    return `<div class="rseg" style="background:${bg}"></div>`;
-  }).join("");
+var KEY = "loan-7lvl-v5";
+var state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+function won(i) { return !!state[i]; }
+function cur() {
+  for (var k = 0; k < LV.length; k++) { if (!won(k)) return k; }
+  return LV.length - 1;
+}
+function fmt(d) {
+  return new Date(d + "T12:00:00").toLocaleDateString("fr-FR", {day:"numeric", month:"short", year:"numeric"});
+}
+function hexRgba(hex, a) {
+  var r = parseInt(hex.slice(1,3), 16);
+  var g = parseInt(hex.slice(3,5), 16);
+  var b = parseInt(hex.slice(5,7), 16);
+  return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 }
 
-function renderSidebar(){
-  const c=cur();
-  let phaseBlocks=[];
-  let curPh=0;
-  LV.forEach((L,i)=>{
-    if(L.ph!==curPh){
-      curPh=L.ph;
-      phaseBlocks.push(`<div class="ph-sep">Phase ${L.ph}</div>`);
+var sel = cur();
+
+function setAccent(el, L) {
+  el.style.setProperty("--accent", L.hex);
+  el.style.setProperty("--accent-tint", hexRgba(L.hex, 0.08));
+  el.style.setProperty("--accent-border", hexRgba(L.hex, 0.25));
+}
+
+function renderRail() {
+  var c = cur();
+  var html = "";
+  for (var i = 0; i < LV.length; i++) {
+    var L = LV[i];
+    var bg = won(i) ? L.hex : (i === c ? hexRgba(L.hex, 0.55) : "var(--line)");
+    html += '<div class="rseg" style="background:' + bg + '"></div>';
+  }
+  document.getElementById("rail").innerHTML = html;
+}
+
+function renderSidebar() {
+  var c = cur();
+  var html = "";
+  var curPh = 0;
+  for (var i = 0; i < LV.length; i++) {
+    var L = LV[i];
+    if (L.ph !== curPh) {
+      curPh = L.ph;
+      html += '<div class="ph-sep">Phase ' + L.ph + '</div>';
     }
-    const isActive=i===sel;
-    const isDone=won(i);
-    const isCur=i===c;
-    const isLocked=!isDone&&i>c;
-    let cls=`lb${isActive?" active":""}${isLocked?" locked":""}`;
-    phaseBlocks.push(`
-      <button class="${cls}" data-i="${i}" aria-pressed="${isActive}" aria-label="Level ${i+1} : ${L.name}">
-        <div class="lb-bar" style="background:var(${L.c})"></div>
-        <div class="lb-body">
-          <div class="lb-num" style="color:var(${L.c})">${i+1}</div>
-          <div class="lb-name">${L.name}</div>
-          <div class="lb-goal">${L.goal}</div>
-        </div>
-        ${isDone?`<div class="lb-ck" style="background:var(${L.c})">✓</div>`:""}
-        ${isCur&&!isDone?`<div class="lb-now">En cours</div>`:""}
-      </button>`);
-  });
-  document.getElementById("sidebar").innerHTML=phaseBlocks.join("");
+    var cls = "lb" + (i === sel ? " active" : "") + (!won(i) && i > c ? " locked" : "");
+    html += '<button class="' + cls + '" data-i="' + i + '" aria-pressed="' + (i === sel) + '" aria-label="Level ' + (i+1) + ' : ' + L.name + '">';
+    html += '<div class="lb-bar" style="background:' + L.hex + '"></div>';
+    html += '<div class="lb-body">';
+    html += '<div class="lb-num" style="color:' + L.hex + '">' + (i+1) + '</div>';
+    html += '<div class="lb-name">' + L.name + '</div>';
+    html += '<div class="lb-goal">' + L.goal + '</div>';
+    html += '</div>';
+    if (won(i)) html += '<div class="lb-ck" style="background:' + L.hex + '">✓</div>';
+    if (i === c && !won(i)) html += '<div class="lb-now">En cours</div>';
+    html += '</button>';
+  }
+  document.getElementById("sidebar").innerHTML = html;
 }
 
-function renderContent(){
-  const L=LV[sel];
-  const i=sel;
-  const s=L.stats;
-  const days=Math.ceil((new Date(L.date+"T23:59:59")-new Date())/864e5);
-  const cdTxt=days>0?days:0;
-  const cdLabel=days>0?`jour${days>1?"s":""}\xa0restants`:"Date passée";
-  const w=won(i);
+function renderContent() {
+  var L = LV[sel];
+  var i = sel;
+  var s = L.stats;
+  var days = Math.ceil((new Date(L.date + "T23:59:59") - new Date()) / 864e5);
+  var cdTxt = days > 0 ? days : 0;
+  var cdLabel = days > 0 ? ("jour" + (days > 1 ? "s" : "") + " restants") : "Date passée";
+  var w = won(i);
 
-  const el=document.getElementById("content");
-  el.style.setProperty("--accent",`var(${L.c})`);
+  var el = document.getElementById("content");
+  setAccent(el, L);
 
-  el.innerHTML=`
-    <div class="lv-head">
-      <div class="lv-bignum">${i+1}</div>
-      <div class="lv-ht">
-        <div class="lv-tag">Level ${i+1} · avant le ${fmt(L.date)}</div>
-        <div class="lv-title">${L.exploit}</div>
-        <div class="lv-expl">${L.name}</div>
-      </div>
-    </div>
-    <div class="ph-note">${PH[L.ph]}</div>
-    <div class="stats">
-      <div class="stat"><div class="stat-v">${s.vids[0]}</div><div class="stat-l">Vidéos postées</div><div class="stat-s">${s.vids[1]} longues · ${s.vids[2]} Shorts</div></div>
-      <div class="stat"><div class="stat-v">${s.longs}</div><div class="stat-l">Vues longues</div></div>
-      <div class="stat"><div class="stat-v">${s.shorts}</div><div class="stat-l">Vues Shorts</div></div>
-      <div class="stat"><div class="stat-v">${s.subs}</div><div class="stat-l">Abonnés</div></div>
-      <div class="stat"><div class="stat-v">${s.eur}</div><div class="stat-l">Revenus</div></div>
-    </div>
-    <div class="cgrid">
-      <div class="skill">
-        <div class="skill-ey">Compétence à débloquer</div>
-        <div class="skill-name">${L.skill.name}</div>
-        <div class="skill-row"><div class="skill-dt">Pourquoi maintenant</div><div class="skill-dd">${L.skill.why}</div></div>
-        <div class="skill-row"><div class="skill-dt">L'exercice</div><div class="skill-dd">${L.skill.ex}</div></div>
-        <div class="skill-mes">${L.skill.mes}</div>
-      </div>
-      <div class="rcol">
-        <div class="box">
-          <div class="box-h">Temps restant</div>
-          <div class="cd-n">${cdTxt}</div>
-          <div class="cd-u">${cdLabel}</div>
-          <div class="cd-d">Deadline : ${fmt(L.date)}</div>
-        </div>
-        <div class="box">
-          <div class="box-h">Pour grossir · à ta taille</div>
-          <ul class="grow">${L.grow.map(g=>`<li class="gi"><span class="gi-k">${g[0]}</span><span class="gi-v">${g[1]}</span></li>`).join("")}</ul>
-        </div>
-        <div class="box">
-          <div class="box-h">Production</div>
-          <ul class="prod-list">${L.prod.map(x=>`<li class="prod-item">${x}</li>`).join("")}</ul>
-        </div>
-        <div class="box">
-          <div class="box-h">Si tu rates la date</div>
-          <p class="fail-p">${L.fail}</p>
-        </div>
-        <button class="win ${w?"done":"todo"}" id="win">${w?"Level validé ✓":"J'ai réussi ce level"}</button>
-      </div>
-    </div>`;
+  var html = '';
+  html += '<div class="lv-head">';
+  html += '<div class="lv-bignum">' + (i+1) + '</div>';
+  html += '<div class="lv-ht">';
+  html += '<div class="lv-tag">Level ' + (i+1) + ' · avant le ' + fmt(L.date) + '</div>';
+  html += '<div class="lv-title">' + L.exploit + '</div>';
+  html += '<div class="lv-expl">' + L.name + '</div>';
+  html += '</div></div>';
+  html += '<div class="ph-note">' + PH[L.ph] + '</div>';
+  html += '<div class="stats">';
+  html += '<div class="stat"><div class="stat-v">' + s.vids[0] + '</div><div class="stat-l">Vidéos postées</div><div class="stat-s">' + s.vids[1] + ' longues · ' + s.vids[2] + ' Shorts</div></div>';
+  html += '<div class="stat"><div class="stat-v">' + s.longs + '</div><div class="stat-l">Vues longues</div></div>';
+  html += '<div class="stat"><div class="stat-v">' + s.shorts + '</div><div class="stat-l">Vues Shorts</div></div>';
+  html += '<div class="stat"><div class="stat-v">' + s.subs + '</div><div class="stat-l">Abonnés</div></div>';
+  html += '<div class="stat"><div class="stat-v">' + s.eur + '</div><div class="stat-l">Revenus</div></div>';
+  html += '</div>';
+  html += '<div class="cgrid">';
+  html += '<div class="skill">';
+  html += '<div class="skill-ey">Compétence à débloquer</div>';
+  html += '<div class="skill-name">' + L.skill.name + '</div>';
+  html += '<div class="skill-row"><div class="skill-dt">Pourquoi maintenant</div><div class="skill-dd">' + L.skill.why + '</div></div>';
+  html += '<div class="skill-row"><div class="skill-dt">L\'exercice</div><div class="skill-dd">' + L.skill.ex + '</div></div>';
+  html += '<div class="skill-mes">' + L.skill.mes + '</div>';
+  html += '</div>';
+  html += '<div class="rcol">';
+  html += '<div class="box"><div class="box-h">Temps restant</div><div class="cd-n">' + cdTxt + '</div><div class="cd-u">' + cdLabel + '</div><div class="cd-d">Deadline : ' + fmt(L.date) + '</div></div>';
+  html += '<div class="box"><div class="box-h">Pour grossir · à ta taille</div><ul class="grow">';
+  for (var g = 0; g < L.grow.length; g++) {
+    html += '<li class="gi"><span class="gi-k">' + L.grow[g][0] + '</span><span class="gi-v">' + L.grow[g][1] + '</span></li>';
+  }
+  html += '</ul></div>';
+  html += '<div class="box"><div class="box-h">Production</div><ul class="prod-list">';
+  for (var p = 0; p < L.prod.length; p++) {
+    html += '<li class="prod-item">' + L.prod[p] + '</li>';
+  }
+  html += '</ul></div>';
+  html += '<div class="box"><div class="box-h">Si tu rates la date</div><p class="fail-p">' + L.fail + '</p></div>';
+  html += '<button class="win ' + (w ? 'done' : 'todo') + '" id="win">' + (w ? 'Level validé ✓' : 'J\'ai réussi ce level') + '</button>';
+  html += '</div></div>';
 
-  document.getElementById("win").addEventListener("click",()=>{
-    state[i]=!won(i);
+  el.innerHTML = html;
+
+  document.getElementById("win").addEventListener("click", function() {
+    state[i] = !won(i);
     save();
-    const btn=document.getElementById("win");
+    var btn = document.getElementById("win");
     btn.classList.add("popping");
-    btn.addEventListener("animationend",()=>btn.classList.remove("popping"),{once:true});
+    btn.addEventListener("animationend", function() { btn.classList.remove("popping"); }, {once: true});
     renderRail();
     renderSidebar();
     renderContent();
   });
 }
 
-function selectLevel(i){
-  sel=i;
-  const el=document.getElementById("content");
+function selectLevel(i) {
+  sel = i;
+  var el = document.getElementById("content");
   el.classList.add("fading");
-  setTimeout(()=>{
+  setTimeout(function() {
     el.classList.remove("fading");
     renderSidebar();
     renderContent();
-  },100);
+  }, 100);
 }
 
-document.getElementById("sidebar").addEventListener("click",e=>{
-  const b=e.target.closest(".lb");
-  if(!b)return;
-  const i=+b.dataset.i;
-  if(i===sel)return;
+document.getElementById("sidebar").addEventListener("click", function(e) {
+  var b = e.target;
+  while (b && !b.dataset.i) b = b.parentElement;
+  if (!b || b.dataset.i === undefined) return;
+  var i = parseInt(b.dataset.i, 10);
+  if (i === sel) return;
   selectLevel(i);
 });
 
