@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>7 Niveaux · Loan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky topbar + sidebar nav (desktop) / horizontal rail (mobile) */
+/* Color: deep navy base, 7 level hues as dynamic accent */
+/* Type: Barlow Condensed (impact numerics) × Manrope (legible body) */
+:root {
+  --bg:    #07090f;
+  --s1:    #0e1120;
+  --s2:    #151824;
+  --line:  #1c2135;
+  --fg:    #e6eaf5;
+  --mid:   #5e6b85;
+  --dim:   #2e3650;
+  --l1:#e3262b; --l2:#f07c1e; --l3:#f5c518;
+  --l4:#b7d334; --l5:#5cc83b; --l6:#22a65a; --l7:#1f7fd1;
+  --accent: var(--l1);
+  --num:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Manrope",system-ui,sans-serif;
+  --r:10px;
+  color-scheme:dark;
+}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){
+  --bg:#edf0f8;--s1:#fff;--s2:#e4e8f2;--line:#ccd2e0;
+  --fg:#0c1023;--mid:#58698a;--dim:#b5bdd0;color-scheme:light;
+}}
+:root[data-theme=light]{
+  --bg:#edf0f8;--s1:#fff;--s2:#e4e8f2;--line:#ccd2e0;
+  --fg:#0c1023;--mid:#58698a;--dim:#b5bdd0;color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:var(--body);font-size:14px;line-height:1.6;
+  padding-inline:0;
+}
+
+/* ─── Topbar ─── */
+.topbar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:11px 18px 9px;
+}
+.topbar-r1{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{
+  font-family:var(--num);font-weight:900;font-size:19px;
+  letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
+}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.chip{
+  font-size:11px;font-weight:600;color:var(--mid);
+  padding:3px 9px;border-radius:999px;border:1px solid var(--line);
+  white-space:nowrap;
+}
+.chip strong{color:var(--fg)}
+.rail{display:flex;gap:3px;margin-top:9px}
+.rseg{
+  height:3px;flex:1;border-radius:2px;
+  background:var(--line);transition:background .3s;
+}
+
+/* ─── Shell ─── */
+.shell{
+  display:grid;grid-template-columns:196px 1fr;
+  min-height:calc(100dvh - 54px);
+}
+@media(max-width:680px){
+  .shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+}
+
+/* ─── Sidebar ─── */
+.sidebar{
+  border-right:1px solid var(--line);
+  padding:8px 7px;display:flex;flex-direction:column;gap:2px;
+  position:sticky;
+  top:calc(env(safe-area-inset-top,0px) + 54px);
+  height:calc(100dvh - 54px);overflow-y:auto;scrollbar-width:thin;
+  scrollbar-color:var(--line) transparent;
+}
+@media(max-width:680px){
+  .sidebar{
+    position:static;height:auto;
+    flex-direction:row;overflow-x:auto;overflow-y:hidden;
+    padding:8px 14px;gap:4px;
+    border-right:none;border-bottom:1px solid var(--line);
+    scrollbar-width:none;
+  }
+  .sidebar::-webkit-scrollbar{display:none}
+}
+.ph-sep{
+  font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--dim);padding:10px 8px 3px;margin-top:2px;
+  border-top:1px solid var(--line);
+}
+.ph-sep:first-child{border-top:none;margin-top:0;padding-top:2px}
+@media(max-width:680px){.ph-sep{display:none}}
+
+.lb{
+  all:unset;cursor:pointer;display:flex;align-items:center;
+  gap:8px;padding:8px 7px;border-radius:var(--r);
+  transition:background .12s;position:relative;min-width:0;
+}
+.lb:hover{background:var(--s1)}
+.lb.active{background:var(--s2)}
+.lb.locked{opacity:.35}
+.lb:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.lb-bar{width:3px;min-height:38px;align-self:stretch;border-radius:2px;flex-shrink:0}
+.lb-body{flex:1;min-width:0}
+.lb-num{
+  font-family:var(--num);font-weight:900;font-size:29px;line-height:.88;
+  transition:color .2s;
+}
+.lb-name{
+  font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.lb-goal{font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-ck{
+  width:17px;height:17px;border-radius:50%;
+  display:grid;place-items:center;font-size:9px;font-weight:900;
+  color:#060910;flex-shrink:0;
+}
+.lb-now{
+  position:absolute;top:4px;right:4px;
+  font-size:8px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--fg);color:var(--bg);padding:1px 4px;border-radius:3px;
+}
+@media(max-width:680px){
+  .lb{padding:6px 5px;flex-direction:column;align-items:center;
+      gap:3px;min-width:46px;border-radius:8px}
+  .lb-bar,.lb-body,.lb-ck,.lb-now{display:none}
+  .lb-num{font-size:27px;line-height:1}
+}
+
+/* ─── Content ─── */
+.content{
+  padding:22px 20px 56px;
+  max-width:780px;
+  transition:opacity .14s ease;
+}
+.content.fading{opacity:0}
+@media(max-width:680px){.content{padding:16px 13px 44px}}
+
+.lv-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.lv-bignum{
+  font-family:var(--num);font-weight:900;
+  font-size:clamp(68px,10.5vw,110px);line-height:.82;
+  flex-shrink:0;color:var(--accent);
+  transition:color .2s;
+}
+.lv-ht{flex:1;min-width:0}
+.lv-tag{
+  font-size:10px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:4px;
+}
+.lv-title{
+  font-family:var(--num);font-weight:900;
+  font-size:clamp(23px,4vw,36px);text-transform:uppercase;line-height:1.0;
+  text-wrap:balance;
+}
+.lv-expl{font-size:14px;color:var(--mid);margin-top:5px;line-height:1.45}
+
+.ph-note{
+  font-size:12px;color:var(--mid);line-height:1.55;
+  padding:9px 13px;margin-bottom:16px;
+  border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;
+  background:color-mix(in srgb,var(--accent) 7%,transparent);
+}
+
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));
+  gap:7px;margin-bottom:16px;
+}
+.stat{
+  background:var(--s1);border:1px solid var(--line);
+  border-radius:var(--r);padding:11px 12px;
+}
+.stat-v{
+  font-family:var(--num);font-weight:900;font-size:23px;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--accent);
+}
+.stat-l{
+  font-size:9px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--mid);margin-top:2px;
+}
+.stat-s{font-size:10px;color:var(--dim);margin-top:2px}
+
+.cgrid{
+  display:grid;grid-template-columns:1.08fr 1fr;
+  gap:10px;align-items:start;
+}
+@media(max-width:580px){.cgrid{grid-template-columns:1fr}}
+
+.skill{
+  background:var(--s1);
+  border:2px solid var(--accent);
+  border-radius:var(--r);padding:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.skill-ey{
+  font-size:9px;font-weight:900;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);
+}
+.skill-name{
+  font-family:var(--num);font-weight:900;font-size:34px;
+  line-height:.92;text-transform:uppercase;margin-top:-2px;
+}
+.skill-row{display:flex;flex-direction:column;gap:2px}
+.skill-dt{
+  font-size:9px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--mid);
+}
+.skill-dd{font-size:12px;line-height:1.55}
+.skill-mes{
+  border-radius:7px;padding:8px 10px;font-size:12px;line-height:1.45;
+  background:color-mix(in srgb,var(--accent) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);
+}
+.skill-mes::before{content:"✓ ";font-weight:800;color:var(--accent)}
+
+.rcol{display:flex;flex-direction:column;gap:8px}
+.box{
+  background:var(--s1);border:1px solid var(--line);
+  border-radius:var(--r);padding:12px 14px;
+}
+.box-h{
+  font-size:9px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--mid);margin-bottom:8px;
+}
+
+.cd-n{
+  font-family:var(--num);font-weight:900;font-size:54px;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--accent);
+}
+.cd-u{
+  font-size:10px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--mid);margin-top:1px;
+}
+.cd-d{font-size:11px;color:var(--dim);margin-top:4px}
+
+.grow{list-style:none;display:flex;flex-direction:column;gap:8px}
+.gi{display:grid;grid-template-columns:58px 1fr;gap:6px}
+.gi-k{
+  font-size:9px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--accent);padding-top:1px;
+}
+.gi-v{font-size:12px;line-height:1.5}
+
+.prod-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.prod-item{
+  font-size:12px;line-height:1.45;
+  padding-left:15px;position:relative;
+}
+.prod-item::before{
+  content:"→";position:absolute;left:0;
+  font-weight:700;color:var(--accent);
+}
+.fail-p{font-size:12px;color:var(--mid);line-height:1.5}
+
+.win{
+  all:unset;cursor:pointer;display:block;width:100%;
+  text-align:center;padding:12px;border-radius:8px;
+  font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  transition:opacity .15s,transform .1s;
+}
+.win.todo{background:var(--accent);color:#07090f}
+.win.done{
+  background:transparent;color:var(--accent);
+  border:2px solid var(--accent);padding:10px;
+}
+.win:hover{opacity:.85}
+.win:active{transform:scale(.98)}
+.win:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@keyframes pop{0%,100%{transform:scale(1)}40%{transform:scale(1.04)}70%{transform:scale(.98)}}
+.win.popping{animation:pop .32s ease}
+
+footer{
+  padding:20px 20px 24px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--dim);line-height:1.6;max-width:780px;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .content,.win,.rseg{transition:none}
+  .win.popping{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-r1">
+    <span class="brand">7 Niveaux · Loan</span>
+    <div class="chips">
+      <span class="chip">Départ <strong>11 oct. 2026</strong> · ~2 700 abonnés · record 50K</span>
+      <span class="chip">Objectif <strong>1 000 €/mois</strong> fin août 2027</span>
+      <span class="chip">Rythme <strong>1 longue/mois</strong> · <strong>1 Short/sem.</strong></span>
+    </div>
+  </div>
+  <div class="rail" id="rail"></div>
+</div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Niveaux"></nav>
+  <main class="content" id="content" aria-live="polite"></main>
+</div>
+
+<footer>Les vidéos et vues sont cumulées depuis le 11 oct. 2026. Revenus estimés à ~2 €/1 000 vues longues — remplace par ton RPM réel (YouTube Studio › Revenus) dès que tu as 2 mois de données. Les levels validés sont enregistrés dans ce navigateur.</footer>
+
+<script>
+const PH={
+  1:"Phase 1 · 2,7K → 4K : tes premiers fans te poussent, chaque vidéo doit leur donner envie de partager.",
+  2:"Phase 2 · 4K → 8K : l'algorithme commence à te recommander, tout se joue sur la rétention et l'enchaînement.",
+  3:"Phase 3 · 8K → 16K : tu deviens un nom, tu vas chercher des publics qui ne te connaissent pas encore."
+};
+
+const LV=[
+  {c:"--l1",ph:1,name:"Égaler le record",goal:"50K vues",date:"2026-11-30",
+   exploit:"Une vidéo longue à 50 000 vues",
+   stats:{vids:[9,2,7],longs:"70K",shorts:"120K",subs:"3 100",eur:"Premiers €"},
+   skill:{name:"Le hook",
+     why:"Ta miniature fait cliquer. Si les 30 premières secondes ne tiennent pas la même promesse, le spectateur part et YouTube arrête de pousser.",
+     ex:"Écris 3 versions de ton intro avant de tourner. L'enjeu physique est dit avant 10 s, la première galère est à l'écran avant 30 s, zéro présentation.",
+     mes:"Rétention à 30 s au-dessus de 70 %."},
+   grow:[["Vues","Envoie chaque vidéo à tes potes créateurs (Wondray, Ykud) et dans tes groupes : à ta taille, les 24 premières heures viennent de ta communauté."],
+         ["Shorts","Les 2 premières secondes sont visuelles, sans texte d'intro. Fin qui reboucle sur le début pour que le Short se revoie en boucle."],
+         ["Abonnés","Demande l'abonnement juste après le moment le plus fort, jamais au début."]],
+   prod:["Titre et miniature décidés avant le tournage","Tournage de la Toussaint en 2 jours max"],
+   fail:"Analyse la rétention à 30 s : si elle est bonne, c'est le concept ; si elle est mauvaise, c'est le hook. Tu sais quoi corriger."},
+  {c:"--l2",ph:1,name:"Premier virement",goal:"70 € reçus",date:"2026-12-31",
+   exploit:"Premier paiement AdSense (seuil 70 €)",
+   stats:{vids:[15,3,12],longs:"120K",shorts:"300K",subs:"3 500",eur:"70 € virés"},
+   skill:{name:"L'écriture orale",
+     why:"Une voix off écrite comme une rédaction, ça s'entend et ça fait décrocher. Les créateurs que tu admires écrivent comme ils parlent.",
+     ex:"Écris ta voix off, puis lis-la à voix haute : chaque phrase où tu butes est réécrite. Phrases de moins de 15 mots. Une boucle ouverte toutes les 2 min.",
+     mes:"Durée moyenne de visionnage au-dessus de 40 %."},
+   grow:[["Vues","Écran de fin + carte vers ta meilleure vidéo dans chaque nouvelle. Un spectateur qui enchaîne 2 vidéos, c'est le signal de recommandation."],
+         ["Shorts","Format avant/après de tes plans. Un format reconnaissable qu'on a envie de revoir."],
+         ["Abonnés","Un live après chaque sortie : le public des lives est celui qui s'abonne et qui revient."]],
+   prod:["4 Shorts découpés dans les rushs de chaque longue","1 vidéo tournée pendant les vacances de Noël"],
+   fail:"Les gains sous 70 € restent cumulés et seront versés le mois suivant le passage du seuil. Rien n'est perdu."},
+  {c:"--l3",ph:2,name:"La 80K",goal:"80K vues",date:"2027-02-15",
+   exploit:"Une vidéo longue à 80 000 vues",
+   stats:{vids:[22,4,18],longs:"220K",shorts:"600K",subs:"4 500",eur:"~150 €/mois"},
+   skill:{name:"L'escalade",
+     why:"La plupart des vidéos perdent leur public entre la minute 5 et 10. Il faut que chaque séquence monte d'un cran par rapport à la précédente.",
+     ex:"Avant de monter, écris chaque séquence sur une ligne avec son niveau de tension de 1 à 10. Si un chiffre redescend, tu coupes ou tu déplaces.",
+     mes:"Rétention à mi-vidéo au-dessus de 45 %. Pas de chute brutale au milieu."},
+   grow:[["Vues","Une playlist par type de vidéo mise en avant. À cette taille, les vues viennent des vidéos suggérées."],
+         ["Shorts","Ajoute le lien « vidéo associée » vers ta longue sur chaque Short."],
+         ["Abonnés","Collab avec des créateurs de ta taille (5–20K) : ton public te découvre avec leur recommandation."]],
+   prod:["Script complet avant tournage","Montage en 3 passes : assemblage, rythme, son + étalonnage"],
+   fail:"Compare la courbe de cette vidéo avec celle de ton record : l'endroit où elle chute te dit quelle séquence n'a pas monté."},
+  {c:"--l4",ph:2,name:"Le club",goal:"250 €/mois",date:"2027-04-15",
+   exploit:"250 € sur un mois (pub + membres)",
+   stats:{vids:[33,6,27],longs:"380K",shorts:"1 M",subs:"6 000",eur:"250 €/mois"},
+   skill:{name:"Toi à l'écran",
+     why:"Les gens viennent pour un concept et restent pour une personne. Tu as peur de donner ton avis : c'est exactement ce qui fera la différence entre un spectateur et un fan.",
+     ex:"Dans chaque vidéo, un moment face caméra où tu dis ce que tu penses vraiment, sans le scénariser. Style réel par défaut, cinématographique pour les 2–3 moments forts.",
+     mes:"Des commentaires qui parlent de toi, pas seulement du concept. 20 membres."},
+   grow:[["Vues","Un post Communauté 2 jours avant chaque vidéo : sondage, photo de tournage. Tes abonnés regardent dès la sortie."],
+         ["Shorts","Republie tes Shorts sur TikTok et Instagram. Même travail, deux publics supplémentaires."],
+         ["Abonnés","Making-of exclusif membres annoncé dans chaque vidéo et chaque live."]],
+   prod:["Déléguer le montage des Shorts","1 vidéo complète pendant les vacances d'hiver"],
+   fail:"Si les membres ne suivent pas, change ce qui est offert dans le club, pas le prix."},
+  {c:"--l5",ph:3,name:"La 150K",goal:"150K + sponsor",date:"2027-05-31",
+   exploit:"150K vues + premier sponsor (300 €)",
+   stats:{vids:[41,8,33],longs:"600K",shorts:"1,5 M",subs:"8 000",eur:"300 € sponsor"},
+   skill:{name:"Le twist",
+     why:"Une fin forte, c'est ce qui fait partager une vidéo. C'est aussi le cœur de ton ADN : le twist qui prouve que la limite était un mensonge.",
+     ex:"Écris la fin en premier, avant tout le reste du script. Teste-la sur 2 personnes : si elles ne réagissent pas à voix haute, réécris.",
+     mes:"Rétention au-dessus de 30 % sur la dernière minute. Clics sur l'écran de fin."},
+   grow:[["Vues","À partir de 8K, propose ton histoire aux médias (Le Parisien, Konbini…) quand le concept a un vrai angle réel."],
+         ["Shorts","Un Short teaser 48 h avant la grosse vidéo, avec le moment le plus fou sans la fin."],
+         ["Abonnés","Apparais dans la vidéo d'un créateur plus gros (50K+). Un passage chez lui vaut plusieurs de tes vidéos en abonnés."]],
+   prod:["Vacances de printemps entièrement pour cette vidéo","Site pour les marques envoyé à 15 marques dès la sortie"],
+   fail:"Démarche quand même les marques avec ta meilleure vidéo et ta croissance depuis octobre."},
+  {c:"--l6",ph:3,name:"Le dossier",goal:"400 €/mois",date:"2027-06-30",
+   exploit:"400 €/mois de moyenne sur avril, mai et juin",
+   stats:{vids:[46,9,37],longs:"800K",shorts:"2 M",subs:"11 000",eur:"400 €/mois"},
+   skill:{name:"La profondeur",
+     why:"Une vidéo qui pose une vraie question et y répond par ce que tu vis, on la partage et on s'en souvient. C'est ta couche Fond.",
+     ex:"Pose une question au début (ex. « qu'est-ce qui nous empêche de partir ? »). Ne donne jamais la réponse avec des mots : ce que tu vis doit y répondre. Morale en une phrase, à la fin.",
+     mes:"Partages et abonnés gagnés pour 1 000 vues en hausse vs tes vidéos précédentes."},
+   grow:[["Vues","Analyse tes 9 longues : garde le type de concept, la durée et le style de miniature qui ont le mieux marché."],
+         ["Shorts","Réponds aux meilleurs commentaires en Short (fonction Répondre avec un Short)."],
+         ["Abonnés","Une série courte cet été (2–3 vidéos liées) : le spectateur s'abonne pour ne pas rater la suite."]],
+   prod:["Les 3 scripts de l'été écrits avant la fin des cours","Le dossier chiffré présenté à tes parents"],
+   fail:"Présente quand même la courbe. Une progression régulière depuis octobre reste un argument solide."},
+  {c:"--l7",ph:3,name:"Vivre de YouTube",goal:"1 000 €/mois",date:"2027-08-31",
+   exploit:"1 000 € en juillet ET en août",
+   stats:{vids:[67,12,55],longs:"1,5 M",shorts:"3 M",subs:"16 000",eur:"1 000 €/mois"},
+   skill:{name:"Le son",
+     why:"Le son fait la moitié de l'émotion. C'est la compétence qui fait passer une bonne vidéo à une vidéo qui marque, et l'été te donne le temps de la travailler.",
+     ex:"Une passe de montage rien que pour le son : ambiances, silences avant les moments forts, musique qui monte avec l'escalade. Coupe la musique au moment le plus intense.",
+     mes:"Durée moyenne de visionnage la plus haute de ta chaîne sur au moins une vidéo de l'été."},
+   grow:[["Vues","Une vidéo toutes les 3 semaines tout l'été : la régularité entretient la recommandation."],
+         ["Shorts","Passe à 2 Shorts par semaine. L'été est la saison où les Shorts tournent le plus."],
+         ["Abonnés","Relance les marques et les créateurs du level 5 avec tes nouveaux chiffres."]],
+   prod:["Les 3 vidéos tournées en juillet, montées au fil de l'été","Prépare le retour au mode sniper avec un vrai budget"],
+   fail:"Entre 400 et 1 000 €, la trajectoire est là. Tu continues en ajustant, tu ne repars pas de zéro."}
+];
+
+const KEY="loan-7lvl-v4";
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const won=i=>!!state[i];
+const cur=()=>{const k=LV.findIndex((_,i)=>!won(i));return k<0?LV.length-1:k};
+const fmt=d=>new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"});
+
+let sel=cur();
+
+function renderRail(){
+  const c=cur();
+  document.getElementById("rail").innerHTML=LV.map((L,i)=>{
+    let bg=won(i)?`var(${L.c})`:(i===c?`color-mix(in srgb,var(${L.c}) 55%,transparent)`):`var(--line)`;
+    return `<div class="rseg" style="background:${bg}"></div>`;
+  }).join("");
+}
+
+function renderSidebar(){
+  const c=cur();
+  let phaseBlocks=[];
+  let curPh=0;
+  LV.forEach((L,i)=>{
+    if(L.ph!==curPh){
+      curPh=L.ph;
+      phaseBlocks.push(`<div class="ph-sep">Phase ${L.ph}</div>`);
+    }
+    const isActive=i===sel;
+    const isDone=won(i);
+    const isCur=i===c;
+    const isLocked=!isDone&&i>c;
+    let cls=`lb${isActive?" active":""}${isLocked?" locked":""}`;
+    phaseBlocks.push(`
+      <button class="${cls}" data-i="${i}" aria-pressed="${isActive}" aria-label="Level ${i+1} : ${L.name}">
+        <div class="lb-bar" style="background:var(${L.c})"></div>
+        <div class="lb-body">
+          <div class="lb-num" style="color:var(${L.c})">${i+1}</div>
+          <div class="lb-name">${L.name}</div>
+          <div class="lb-goal">${L.goal}</div>
+        </div>
+        ${isDone?`<div class="lb-ck" style="background:var(${L.c})">✓</div>`:""}
+        ${isCur&&!isDone?`<div class="lb-now">En cours</div>`:""}
+      </button>`);
+  });
+  document.getElementById("sidebar").innerHTML=phaseBlocks.join("");
+}
+
+function renderContent(){
+  const L=LV[sel];
+  const i=sel;
+  const s=L.stats;
+  const days=Math.ceil((new Date(L.date+"T23:59:59")-new Date())/864e5);
+  const cdTxt=days>0?days:0;
+  const cdLabel=days>0?`jour${days>1?"s":""}\xa0restants`:"Date passée";
+  const w=won(i);
+
+  const el=document.getElementById("content");
+  el.style.setProperty("--accent",`var(${L.c})`);
+
+  el.innerHTML=`
+    <div class="lv-head">
+      <div class="lv-bignum">${i+1}</div>
+      <div class="lv-ht">
+        <div class="lv-tag">Level ${i+1} · avant le ${fmt(L.date)}</div>
+        <div class="lv-title">${L.exploit}</div>
+        <div class="lv-expl">${L.name}</div>
+      </div>
+    </div>
+    <div class="ph-note">${PH[L.ph]}</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-v">${s.vids[0]}</div><div class="stat-l">Vidéos postées</div><div class="stat-s">${s.vids[1]} longues · ${s.vids[2]} Shorts</div></div>
+      <div class="stat"><div class="stat-v">${s.longs}</div><div class="stat-l">Vues longues</div></div>
+      <div class="stat"><div class="stat-v">${s.shorts}</div><div class="stat-l">Vues Shorts</div></div>
+      <div class="stat"><div class="stat-v">${s.subs}</div><div class="stat-l">Abonnés</div></div>
+      <div class="stat"><div class="stat-v">${s.eur}</div><div class="stat-l">Revenus</div></div>
+    </div>
+    <div class="cgrid">
+      <div class="skill">
+        <div class="skill-ey">Compétence à débloquer</div>
+        <div class="skill-name">${L.skill.name}</div>
+        <div class="skill-row"><div class="skill-dt">Pourquoi maintenant</div><div class="skill-dd">${L.skill.why}</div></div>
+        <div class="skill-row"><div class="skill-dt">L'exercice</div><div class="skill-dd">${L.skill.ex}</div></div>
+        <div class="skill-mes">${L.skill.mes}</div>
+      </div>
+      <div class="rcol">
+        <div class="box">
+          <div class="box-h">Temps restant</div>
+          <div class="cd-n">${cdTxt}</div>
+          <div class="cd-u">${cdLabel}</div>
+          <div class="cd-d">Deadline : ${fmt(L.date)}</div>
+        </div>
+        <div class="box">
+          <div class="box-h">Pour grossir · à ta taille</div>
+          <ul class="grow">${L.grow.map(g=>`<li class="gi"><span class="gi-k">${g[0]}</span><span class="gi-v">${g[1]}</span></li>`).join("")}</ul>
+        </div>
+        <div class="box">
+          <div class="box-h">Production</div>
+          <ul class="prod-list">${L.prod.map(x=>`<li class="prod-item">${x}</li>`).join("")}</ul>
+        </div>
+        <div class="box">
+          <div class="box-h">Si tu rates la date</div>
+          <p class="fail-p">${L.fail}</p>
+        </div>
+        <button class="win ${w?"done":"todo"}" id="win">${w?"Level validé ✓":"J'ai réussi ce level"}</button>
+      </div>
+    </div>`;
+
+  document.getElementById("win").addEventListener("click",()=>{
+    state[i]=!won(i);
+    save();
+    const btn=document.getElementById("win");
+    btn.classList.add("popping");
+    btn.addEventListener("animationend",()=>btn.classList.remove("popping"),{once:true});
+    renderRail();
+    renderSidebar();
+    renderContent();
+  });
+}
+
+function selectLevel(i){
+  sel=i;
+  const el=document.getElementById("content");
+  el.classList.add("fading");
+  setTimeout(()=>{
+    el.classList.remove("fading");
+    renderSidebar();
+    renderContent();
+  },100);
+}
+
+document.getElementById("sidebar").addEventListener("click",e=>{
+  const b=e.target.closest(".lb");
+  if(!b)return;
+  const i=+b.dataset.i;
+  if(i===sel)return;
+  selectLevel(i);
+});
+
+renderRail();
+renderSidebar();
+renderContent();
+</script>
+
+</body>
+</html>
